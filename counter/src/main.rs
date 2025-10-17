@@ -1,6 +1,6 @@
 use gpui::{
-    AppContext, Application, Bounds, FontWeight, Render, Styled,
-    WindowBounds, WindowOptions, div, prelude::*, px, rgb, size,
+    AppContext, Application, Bounds, FontWeight, Render, Styled, WindowBounds, WindowOptions, div,
+    prelude::*, px, rgb, size,
 };
 use ui::button;
 
@@ -16,6 +16,12 @@ impl CounterModel {
 
 struct CounterApp {
     model: CounterModel,
+}
+
+impl CounterApp {
+    fn new(model: CounterModel) -> Self {
+        Self { model }
+    }
 }
 
 impl Render for CounterApp {
@@ -55,7 +61,7 @@ fn main() {
                 window_bounds: Some(WindowBounds::Windowed(bounds)),
                 ..Default::default()
             },
-            |_, cx| cx.new(|_| CounterApp { model: counter }),
+            |_, cx| cx.new(|_| CounterApp::new(counter)),
         )
         .unwrap();
 
