@@ -1,8 +1,8 @@
 [package]
-name = "ui"
+name = "temperature_converter"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+ui = { path = "../ui" }
 gpui = { version = "*" }
-unicode-segmentation = "1.12.0"
