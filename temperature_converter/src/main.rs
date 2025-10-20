@@ -31,7 +31,7 @@ impl ConversionModel {
 
 struct TemperatureConverterApp {
     model: Entity<ConversionModel>,
-    celcius_input: Entity<TextInput>,
+    celsius_input: Entity<TextInput>,
     fahrenheit_input: Entity<TextInput>,
     focus_handle: FocusHandle,
 }
@@ -64,10 +64,10 @@ impl Render for TemperatureConverterApp {
                             .w_full()
                             .p_2()
                             .rounded_md()
-                            .child(self.celcius_input.clone())
+                            .child(self.celsius_input.clone())
                             .on_key_up(cx.listener(|app, _event, _window, cx| {
                                 app.model.update(cx, |this, cx| {
-                                    this.c_val = match app.celcius_input.read(cx).content.parse() {
+                                    this.c_val = match app.celsius_input.read(cx).content.parse() {
                                         Ok(val) => val,
                                         Err(_) => {
                                             return;
@@ -81,7 +81,7 @@ impl Render for TemperatureConverterApp {
                                 });
                             })),
                     )
-                    .child("Celcius = ")
+                    .child("Celsius = ")
                     .child(
                         div()
                             .w_full()
@@ -196,7 +196,7 @@ fn main() {
                     });
 
                     cx.new(|cx| TemperatureConverterApp {
-                        celcius_input: c_input,
+                        celsius_input: c_input,
                         fahrenheit_input: f_input,
                         focus_handle: cx.focus_handle(),
                         model: model,
@@ -207,7 +207,7 @@ fn main() {
 
         window
             .update(cx, |view, window, cx| {
-                window.focus(&view.celcius_input.focus_handle(cx));
+                window.focus(&view.celsius_input.focus_handle(cx));
                 cx.activate(true);
             })
             .unwrap();
