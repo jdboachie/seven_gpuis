@@ -1,11 +1,28 @@
 use gpui::{
     App, Application, Bounds, Context, Entity, EventEmitter, FocusHandle, Focusable, KeyBinding,
-    SharedString, Window, WindowBounds, WindowOptions, div, prelude::*, px, rgb, size,
+    SharedString, Window, WindowBounds, WindowOptions, actions, div, prelude::*, px, rgb, size,
 };
-use ui::{
-    Backspace, Copy, Cut, Delete, End, Home, Left, Paste, Quit, Right, SelectAll, SelectLeft,
-    SelectRight, ShowCharacterPalette, TextInput,
-};
+use ui::TextInput;
+
+actions!(
+    text_input,
+    [
+        Backspace,
+        Delete,
+        Left,
+        Right,
+        SelectLeft,
+        SelectRight,
+        SelectAll,
+        Home,
+        End,
+        ShowCharacterPalette,
+        Paste,
+        Cut,
+        Copy,
+        Quit,
+    ]
+);
 
 struct ConversionModel {
     c_val: f32,

@@ -2,7 +2,7 @@ use gpui::{
     AppContext, Application, Bounds, FontWeight, Render, Styled, WindowBounds, WindowOptions, div,
     prelude::*, px, rgb, size,
 };
-use ui::button;
+use ui::{Button, Theme};
 
 struct CounterModel {
     count: u32,
@@ -46,15 +46,21 @@ impl Render for CounterApp {
                     .font_weight(FontWeight::SEMIBOLD)
                     .child(format!("{}", self.model.count)),
             )
-            .child(button("Increment").on_click(cx.listener(|this, _, _, _| {
-                this.model.increment();
-            })))
+            .child(
+                Button::new("b".into())
+                    .with_label("Increment".into())
+                    .on_click(cx.listener(|this, _, _, _| {
+                        this.model.increment();
+                    })),
+            )
     }
 }
 
 fn main() {
     Application::new().run(|cx| {
-        let bounds = Bounds::centered(None, size(px(500.0), px(500.0)), cx);
+        Theme::init(cx);
+
+        let bounds = Bounds::centered(None, size(px(200.0), px(150.0)), cx);
         let counter = CounterModel { count: 0 };
         cx.open_window(
             WindowOptions {
