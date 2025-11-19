@@ -1,28 +1,11 @@
 use gpui::{
     App, Application, Bounds, Context, Entity, EventEmitter, FocusHandle, Focusable, KeyBinding,
-    SharedString, Window, WindowBounds, WindowOptions, actions, div, prelude::*, px, rgb, size,
+    SharedString, Window, WindowBounds, WindowOptions, div, prelude::*, px, rgb, size,
 };
-use ui::TextInput;
-
-actions!(
-    text_input,
-    [
-        Backspace,
-        Delete,
-        Left,
-        Right,
-        SelectLeft,
-        SelectRight,
-        SelectAll,
-        Home,
-        End,
-        ShowCharacterPalette,
-        Paste,
-        Cut,
-        Copy,
-        Quit,
-    ]
-);
+use ui::{
+    Backspace, Copy, Cut, Delete, End, Home, Left, Paste, Quit, Right, SelectAll, SelectLeft,
+    SelectRight, ShowCharacterPalette, TextInput, Theme,
+};
 
 struct ConversionModel {
     c_val: f32,
@@ -135,6 +118,8 @@ impl EventEmitter<ChangeEvent> for ConversionModel {}
 
 fn main() {
     Application::new().run(|cx: &mut App| {
+        Theme::init(cx);
+
         cx.bind_keys([
             KeyBinding::new("backspace", Backspace, None),
             KeyBinding::new("delete", Delete, None),
@@ -173,17 +158,7 @@ fn main() {
                             },
                         )
                         .detach();
-                        TextInput {
-                            focus_handle: cx.focus_handle(),
-                            content: model.read(cx).c_val.to_string().into(),
-                            placeholder: "Type here...".into(),
-                            selected_range: 0..0,
-                            selection_reversed: false,
-                            marked_range: None,
-                            last_layout: None,
-                            last_bounds: None,
-                            is_selecting: false,
-                        }
+                        TextInput::new(cx)
                     });
                     let f_input = cx.new(|cx| {
                         cx.subscribe(
@@ -199,17 +174,7 @@ fn main() {
                         )
                         .detach();
 
-                        TextInput {
-                            focus_handle: cx.focus_handle(),
-                            content: model.read(cx).f_val.to_string().into(),
-                            placeholder: "Type here...".into(),
-                            selected_range: 0..0,
-                            selection_reversed: false,
-                            marked_range: None,
-                            last_layout: None,
-                            last_bounds: None,
-                            is_selecting: false,
-                        }
+                        TextInput::new(cx)
                     });
 
                     cx.new(|cx| TemperatureConverterApp {
