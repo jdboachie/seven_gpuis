@@ -16,7 +16,7 @@ impl Default for Theme {
     fn default() -> Self {
         Self {
             primary: rgba(0x0078D4FF).into(),
-            primary_hover: rgba(0x0078D4FF).into(),
+            primary_hover: rgba(0x0078D4DD).into(),
             foreground: rgb(0x2f2f2f).into(),
             border: rgba(0xd3d3d6bb).into(),
             ground: rgb(0xF3F4F6).into(),

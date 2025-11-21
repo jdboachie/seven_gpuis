@@ -39,6 +39,7 @@ pub struct TextInput {
     pub last_layout: Option<ShapedLine>,
     pub last_bounds: Option<Bounds<Pixels>>,
     pub is_selecting: bool,
+    pub disabled: bool,
 }
 
 impl TextInput {
@@ -53,12 +54,12 @@ impl TextInput {
             last_layout: None,
             last_bounds: None,
             is_selecting: false,
+            disabled: false,
         }
     }
 
-    pub fn content(mut self, content: SharedString) -> Self {
-        self.content = content;
-        self
+    pub fn disabled(&mut self, disabled: bool) {
+        self.disabled = disabled;
     }
 
     pub fn placeholder(mut self, placeholder: SharedString) -> Self {
@@ -600,6 +601,7 @@ impl Render for TextInput {
             .items_center()
             .px_2()
             .w_full()
+            .h(px(22. + 4. * 2.))
             .border_1()
             .border_color(theme.border)
             .rounded_md()
@@ -607,35 +609,40 @@ impl Render for TextInput {
             .key_context("TextInput")
             .track_focus(&self.focus_handle(cx))
             .cursor(CursorStyle::IBeam)
-            .on_action(cx.listener(Self::backspace))
-            .on_action(cx.listener(Self::delete))
-            .on_action(cx.listener(Self::left))
-            .on_action(cx.listener(Self::right))
-            .on_action(cx.listener(Self::select_left))
-            .on_action(cx.listener(Self::select_right))
-            .on_action(cx.listener(Self::select_all))
-            .on_action(cx.listener(Self::home))
-            .on_action(cx.listener(Self::end))
-            .on_action(cx.listener(Self::show_character_palette))
-            .on_action(cx.listener(Self::paste))
-            .on_action(cx.listener(Self::cut))
-            .on_action(cx.listener(Self::copy))
-            .on_mouse_down(MouseButton::Left, cx.listener(Self::on_mouse_down))
-            .on_mouse_move(cx.listener(Self::on_mouse_move))
-            .on_mouse_up(MouseButton::Left, cx.listener(Self::on_mouse_up))
-            .on_mouse_up_out(MouseButton::Left, cx.listener(Self::on_mouse_up))
-            .bg(theme.transparent)
-            .line_height(px(18.))
-            .text_size(px(16.))
-            .child(
-                div()
-                    .h(px(18. + 4. * 2.))
-                    .w_full()
-                    .flex()
-                    .items_center()
-                    .justify_start()
-                    .child(TextElement { input: cx.entity() }),
-            )
+            .when(self.disabled, |this| {
+                this.cursor(CursorStyle::OperationNotAllowed).opacity(0.6)
+            })
+            .when(self.disabled == false, |this| {
+                this.on_action(cx.listener(Self::backspace))
+                    .on_action(cx.listener(Self::delete))
+                    .on_action(cx.listener(Self::left))
+                    .on_action(cx.listener(Self::right))
+                    .on_action(cx.listener(Self::select_left))
+                    .on_action(cx.listener(Self::select_right))
+                    .on_action(cx.listener(Self::select_all))
+                    .on_action(cx.listener(Self::home))
+                    .on_action(cx.listener(Self::end))
+                    .on_action(cx.listener(Self::show_character_palette))
+                    .on_action(cx.listener(Self::paste))
+                    .on_action(cx.listener(Self::cut))
+                    .on_action(cx.listener(Self::copy))
+                    .on_mouse_down(MouseButton::Left, cx.listener(Self::on_mouse_down))
+                    .on_mouse_move(cx.listener(Self::on_mouse_move))
+                    .on_mouse_up(MouseButton::Left, cx.listener(Self::on_mouse_up))
+                    .on_mouse_up_out(MouseButton::Left, cx.listener(Self::on_mouse_up))
+                    .bg(theme.transparent)
+                    .line_height(px(18.))
+                    .text_size(px(16.))
+                    .child(
+                        div()
+                            .w_full()
+                            .h_full()
+                            .flex()
+                            .items_center()
+                            .justify_start()
+                            .child(TextElement { input: cx.entity() }),
+                    )
+            })
     }
 }
 

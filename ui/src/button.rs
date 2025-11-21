@@ -1,6 +1,6 @@
 use gpui::{
-    App, ClickEvent, InteractiveElement, IntoElement, ParentElement, RenderOnce, SharedString,
-    StatefulInteractiveElement, Styled, Window, div, prelude::*, rgb, svg,
+    App, ClickEvent, CursorStyle, InteractiveElement, IntoElement, ParentElement, RenderOnce,
+    SharedString, StatefulInteractiveElement, Styled, Window, div, prelude::*, rgb, svg,
 };
 
 use crate::theme::use_theme;
@@ -20,6 +20,7 @@ impl Default for ButtonVariant {
 #[derive(Default, IntoElement)]
 pub struct Button {
     id: SharedString,
+    disabled: bool,
     variant: ButtonVariant,
     label: Option<SharedString>,
     icon_path: Option<SharedString>,
@@ -31,12 +32,18 @@ impl Button {
     pub fn new(id: SharedString) -> Self {
         Button {
             id,
+            disabled: false,
             variant: ButtonVariant::default(),
             label: None,
             icon_path: None,
             on_click: None,
             full_width: false,
         }
+    }
+
+    pub fn disabled(mut self, disabled: bool) -> Self {
+        self.disabled = disabled;
+        self
     }
 
     pub fn full_width(mut self, full_width: bool) -> Self {
@@ -84,6 +91,10 @@ impl RenderOnce for Button {
             .px_3()
             .rounded_md()
             .when(self.full_width, |this| this.w_full())
+            .when_some(
+                self.on_click.filter(|_| !self.disabled),
+                |this, on_click| this.on_click(on_click),
+            )
             .shadow_2xs()
             .text_sm()
             .text_color(match self.variant {
@@ -91,22 +102,27 @@ impl RenderOnce for Button {
                 _ => theme.foreground,
             })
             .border_1()
-            .hover(|this| {
-                this.bg(match self.variant {
-                    ButtonVariant::Solid => theme.primary_hover,
-                    _ => theme.highlight,
-                })
+            .when(self.disabled == false, |this| {
+                this.active(|this| this.shadow_none())
+                    .hover(|this| {
+                        this.bg(match self.variant {
+                            ButtonVariant::Solid => theme.primary_hover,
+                            _ => theme.highlight,
+                        })
+                    })
             })
-            .focus(|style| style.border_4().border_color(gpui::rgb(0xfbbf24)))
             .border_color(match self.variant {
                 ButtonVariant::Ghost => theme.transparent,
-                ButtonVariant::Solid => theme.primary_hover,
                 ButtonVariant::Outlined => theme.border,
+                ButtonVariant::Solid => theme.primary_hover,
             })
             .bg(match self.variant {
                 ButtonVariant::Ghost => theme.transparent,
-                ButtonVariant::Solid => theme.primary,
                 ButtonVariant::Outlined => theme.button_surface,
+                ButtonVariant::Solid => theme.primary,
+            })
+            .when(self.disabled, |this| {
+                this.cursor(CursorStyle::OperationNotAllowed).opacity(0.6)
             });
 
         if let Some(label) = self.label {
@@ -117,10 +133,6 @@ impl RenderOnce for Button {
             root = root
                 .justify_between()
                 .child(svg().path(icon).size_3().text_color(rgb(0x555555)))
-        }
-
-        if let Some(on_click) = self.on_click {
-            root = root.on_click(on_click);
         }
 
         root
