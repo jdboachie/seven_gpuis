@@ -4,7 +4,7 @@ use assets::Assets;
 use gpui::{prelude::*, *};
 use ui::{
     Backspace, Button, ButtonVariant, Copy, Cut, Delete, Dropdown, End, Home, Left, MenuItem,
-    Paste, Right, SelectAll, SelectLeft, SelectRight, TextInput, Theme, use_theme,
+    Paste, Right, SelectAll, SelectLeft, SelectRight, TextInput, Theme, ThemeAble,
 };
 
 fn parse_date(date: SharedString) -> bool {
@@ -26,7 +26,7 @@ fn parse_date(date: SharedString) -> bool {
         Err(_) => return false,
     };
 
-    if year < 2025 || year > 9999 {
+    if !(2025..=9999).contains(&year) {
         return false;
     }
     if month == 0 || month > 12 {
@@ -72,7 +72,7 @@ impl Render for MainWindow {
             this.disabled(should_disable);
         });
 
-        let theme = use_theme(cx);
+        let theme = cx.theme();
 
         let dropdown_trigger = Button::new("dropdown-trigger".into())
             .variant(ButtonVariant::Outlined)
@@ -127,12 +127,14 @@ impl Render for MainWindow {
             .child(
                 div()
                     .w_full()
+                    .rounded_md()
                     .when(!start_ok, |this| this.bg(red()))
                     .child(self.start_input.clone()),
             )
             .child(
                 div()
                     .w_full()
+                    .rounded_md()
                     .when(!return_ok, |this| this.bg(red()))
                     .child(self.return_input.clone()),
             )

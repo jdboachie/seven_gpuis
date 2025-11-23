@@ -1,10 +1,10 @@
 use gpui::{
     App, Application, Bounds, Context, Entity, EventEmitter, FocusHandle, Focusable, KeyBinding,
-    SharedString, Window, WindowBounds, WindowOptions, div, prelude::*, px, rgb, size,
+    SharedString, Window, WindowBounds, WindowOptions, div, prelude::*, px, size,
 };
 use ui::{
     Backspace, Copy, Cut, Delete, End, Home, Left, Paste, Quit, Right, SelectAll, SelectLeft,
-    SelectRight, ShowCharacterPalette, TextInput, Theme,
+    SelectRight, TextInput, Theme, ThemeAble,
 };
 
 struct ConversionModel {
@@ -46,7 +46,7 @@ impl Render for TemperatureConverterApp {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         div()
             .size_full()
-            .bg(rgb(0xf8f8f8))
+            .bg(cx.theme().ground)
             .track_focus(&self.focus_handle(cx))
             .flex()
             .flex_col()
@@ -133,7 +133,6 @@ fn main() {
             KeyBinding::new("ctrl-x", Cut, None),
             KeyBinding::new("home", Home, None),
             KeyBinding::new("end", End, None),
-            KeyBinding::new("ctrl-space", ShowCharacterPalette, None),
         ]);
 
         let bounds = Bounds::centered(None, size(px(500.0), px(100.0)), cx);
@@ -181,7 +180,7 @@ fn main() {
                         celsius_input: c_input,
                         fahrenheit_input: f_input,
                         focus_handle: cx.focus_handle(),
-                        model: model,
+                        model,
                     })
                 },
             )

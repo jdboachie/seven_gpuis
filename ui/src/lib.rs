@@ -8,4 +8,4 @@ pub use button::{Button, ButtonVariant};
 pub use dropdown::{Dropdown, MenuItem};
 pub use popover::Popover;
 pub use text_input::*;
-pub use theme::{Theme, use_theme};
+pub use theme::{Theme, ThemeAble};

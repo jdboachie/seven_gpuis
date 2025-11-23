@@ -83,8 +83,6 @@ impl RenderOnce for Dropdown {
     fn render(self, _window: &mut gpui::Window, _cx: &mut gpui::App) -> impl IntoElement {
         let menu = div().children(self.menu);
 
-        let root = Popover::new(self.id, self.trigger, menu.into_any_element()).open(self.open);
-
-        root
+        Popover::new(self.id, self.trigger, menu.into_any_element()).open(self.open)
     }
 }

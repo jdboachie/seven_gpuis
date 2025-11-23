@@ -3,7 +3,7 @@ use gpui::{
     SharedString, StatefulInteractiveElement, Styled, Window, div, prelude::*, rgb, svg,
 };
 
-use crate::theme::use_theme;
+use crate::theme::ThemeAble;
 
 pub enum ButtonVariant {
     Ghost,
@@ -78,7 +78,7 @@ impl Button {
 
 impl RenderOnce for Button {
     fn render(self, _window: &mut gpui::Window, cx: &mut gpui::App) -> impl gpui::IntoElement {
-        let theme = use_theme(cx);
+        let theme = cx.theme();
 
         let mut root = div()
             .id(self.id)
@@ -102,14 +102,13 @@ impl RenderOnce for Button {
                 _ => theme.foreground,
             })
             .border_1()
-            .when(self.disabled == false, |this| {
-                this.active(|this| this.shadow_none())
-                    .hover(|this| {
-                        this.bg(match self.variant {
-                            ButtonVariant::Solid => theme.primary_hover,
-                            _ => theme.highlight,
-                        })
+            .when(!self.disabled, |this| {
+                this.active(|this| this.shadow_none()).hover(|this| {
+                    this.bg(match self.variant {
+                        ButtonVariant::Solid => theme.primary_hover,
+                        _ => theme.highlight,
                     })
+                })
             })
             .border_color(match self.variant {
                 ButtonVariant::Ghost => theme.transparent,

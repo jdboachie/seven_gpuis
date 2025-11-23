@@ -1,8 +1,8 @@
 use gpui::{
     AppContext, Application, Bounds, FontWeight, Render, Styled, WindowBounds, WindowOptions, div,
-    prelude::*, px, rgb, size,
+    prelude::*, px, size,
 };
-use ui::{Button, Theme};
+use ui::{Button, Theme, ThemeAble};
 
 struct CounterModel {
     count: u32,
@@ -30,6 +30,8 @@ impl Render for CounterApp {
         _window: &mut gpui::Window,
         cx: &mut gpui::Context<Self>,
     ) -> impl gpui::IntoElement {
+        let theme = cx.theme();
+
         div()
             .p_4()
             .flex()
@@ -38,7 +40,7 @@ impl Render for CounterApp {
             .size_full()
             .justify_center()
             .items_center()
-            .bg(rgb(0xf7f7f7))
+            .bg(theme.ground)
             .gap_2()
             .child(
                 div()

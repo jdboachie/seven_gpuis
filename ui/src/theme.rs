@@ -1,5 +1,15 @@
 use gpui::{App, Global, Hsla, hsla, rgb, rgba};
 
+pub trait ThemeAble {
+    fn theme(&self) -> &Theme;
+}
+
+impl ThemeAble for App {
+    fn theme(&self) -> &Theme {
+        self.global::<Theme>()
+    }
+}
+
 pub struct Theme {
     pub border: Hsla,
     pub button_surface: Hsla,
@@ -34,8 +44,4 @@ impl Theme {
     pub fn init(cx: &mut App) {
         cx.set_global(Theme::default());
     }
-}
-
-pub fn use_theme(cx: &App) -> &Theme {
-    cx.global::<Theme>()
 }

@@ -1,4 +1,4 @@
-use crate::theme::use_theme;
+use crate::theme::ThemeAble;
 use gpui::{
     App, Bounds, ClipboardItem, Context, CursorStyle, ElementId, ElementInputHandler, Entity,
     EntityInputHandler, FocusHandle, Focusable, GlobalElementId, LayoutId, MouseButton,
@@ -593,7 +593,7 @@ impl Element for TextElement {
 
 impl Render for TextInput {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        let theme = use_theme(cx);
+        let theme = cx.theme();
 
         div()
             .flex()
@@ -612,7 +612,7 @@ impl Render for TextInput {
             .when(self.disabled, |this| {
                 this.cursor(CursorStyle::OperationNotAllowed).opacity(0.6)
             })
-            .when(self.disabled == false, |this| {
+            .when(!self.disabled, |this| {
                 this.on_action(cx.listener(Self::backspace))
                     .on_action(cx.listener(Self::delete))
                     .on_action(cx.listener(Self::left))
