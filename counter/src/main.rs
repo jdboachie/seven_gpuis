@@ -1,30 +1,24 @@
 use gpui::{
-    AppContext, Application, Bounds, FontWeight, Render, Styled, WindowBounds, WindowOptions, div,
+    AppContext, Application, Bounds, Render, Styled, WindowBounds, WindowOptions, div,
     prelude::*, px, size,
 };
 use ui::{Button, Theme, ThemeAble};
 
-struct CounterModel {
+struct Counter {
     count: u32,
 }
 
-impl CounterModel {
+impl Counter {
+    fn new(count: u32) -> Self {
+        Self { count }
+    }
+
     fn increment(&mut self) {
         self.count += 1;
     }
 }
 
-struct CounterApp {
-    model: CounterModel,
-}
-
-impl CounterApp {
-    fn new(model: CounterModel) -> Self {
-        Self { model }
-    }
-}
-
-impl Render for CounterApp {
+impl Render for Counter {
     fn render(
         &mut self,
         _window: &mut gpui::Window,
@@ -35,24 +29,22 @@ impl Render for CounterApp {
         div()
             .p_4()
             .flex()
-            .flex_col()
             .gap_4()
             .size_full()
             .justify_center()
             .items_center()
             .bg(theme.ground)
-            .gap_2()
+            .gap_4()
             .child(
                 div()
                     .text_2xl()
-                    .font_weight(FontWeight::SEMIBOLD)
-                    .child(format!("{}", self.model.count)),
+                    .child(format!("{}", self.count)),
             )
             .child(
                 Button::new("b".into())
-                    .with_label("Increment".into())
+                    .with_label("Count".into())
                     .on_click(cx.listener(|this, _, _, _| {
-                        this.model.increment();
+                        this.increment();
                     })),
             )
     }
@@ -61,15 +53,13 @@ impl Render for CounterApp {
 fn main() {
     Application::new().run(|cx| {
         Theme::init(cx);
-
-        let bounds = Bounds::centered(None, size(px(200.0), px(150.0)), cx);
-        let counter = CounterModel { count: 0 };
+        let bounds = Bounds::centered(None, size(px(200.0), px(125.0)), cx);
         cx.open_window(
             WindowOptions {
                 window_bounds: Some(WindowBounds::Windowed(bounds)),
                 ..Default::default()
             },
-            |_, cx| cx.new(|_| CounterApp::new(counter)),
+            |_, cx| cx.new(|_| Counter::new(0)),
         )
         .unwrap();
 
